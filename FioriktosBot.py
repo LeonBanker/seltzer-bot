@@ -822,7 +822,7 @@ def gdpr(update, context, chat):
             filename = MEMORY_MANAGER.download_chat(chat, update.message.chat_id)
             context.bot.send_document(chat_id=update.message.chat_id, document=open(filename, "rb"))
         elif command == "delete":
-            if user_id == ADMIN:
+            if update.message.user_id == ADMIN:
                 MEMORY_MANAGER.delete_chat(update.message.chat_id)
                 context.bot.send_message(chat_id=update.message.chat_id, text="ACK")
             else:
