@@ -16,73 +16,69 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
-
 """ Environment variables """
-BOT_TOKEN             = environ.get("BOT_TOKEN")
-BOT_ID                = int(BOT_TOKEN[:BOT_TOKEN.find(':')])
-ADMIN                 = int(environ.get("ADMIN"))
-HEROKU_APP_NAME       = environ.get("HEROKU_APP_NAME")
-DATABASE_URL          = environ.get("DATABASE_URL")
-PORT                  = int(environ.get("PORT", "8443"))
-AWS_ACCESS_KEY_ID     = environ.get("AWS_ACCESS_KEY_ID")
+BOT_TOKEN = environ.get("BOT_TOKEN")
+BOT_ID = int(BOT_TOKEN[:BOT_TOKEN.find(':')])
+ADMIN = int(environ.get("ADMIN"))
+HEROKU_APP_NAME = environ.get("HEROKU_APP_NAME")
+DATABASE_URL = environ.get("DATABASE_URL")
+PORT = int(environ.get("PORT", "8443"))
+AWS_ACCESS_KEY_ID = environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = environ.get("AWS_SECRET_ACCESS_KEY")
-REGION_NAME           = environ.get("REGION_NAME")
-S3_BUCKET_NAME        = environ.get("S3_BUCKET_NAME")
-
-
+REGION_NAME = environ.get("REGION_NAME")
+S3_BUCKET_NAME = environ.get("S3_BUCKET_NAME")
 
 """ Constants """
-BEGIN                     = ""
-END                       = 0
-ENDING_PUNCTUATION_MARKS  = ".!?\n"
-MESSAGE                   = "Message"
-STICKER                   = "Sticker"
-ANIMATION                 = "Animation"
-AUDIO                     = "Audio"
+BEGIN = ""
+END = 0
+ENDING_PUNCTUATION_MARKS = ".!?\n"
+MESSAGE = "Message"
+STICKER = "Sticker"
+ANIMATION = "Animation"
+AUDIO = "Audio"
 
-PREFIX                    = "chats/"
-TO_KEY                    = lambda chat_id: PREFIX + str(chat_id) + ".txt"
+PREFIX = "chats/"
+TO_KEY = lambda chat_id: PREFIX + str(chat_id) + ".txt"
 
-CHAT_MAX_DURATION         = 7776000   # seconds in three months
-CHAT_UPDATE_TIMEOUT       = 666       # 37 % of 30 minutes
+CHAT_MAX_DURATION = 7776000  # seconds in three months
+CHAT_UPDATE_TIMEOUT = 666  # 37 % of 30 minutes
 SUCCESSOR_LIST_MAX_LENGTH = 256
-WORD_LIST_MAX_LENGTH      = 16384
-MEDIA_LIST_MAX_LENGTH     = 1024
+WORD_LIST_MAX_LENGTH = 16384
+MEDIA_LIST_MAX_LENGTH = 1024
 
 LANG_TO_VOICE = {
-    'af':    'Ruben',    # redirect Afrikaans to Dutch
-    'ar':    'Zeina',
-    'bg':    'Maxim',    # redirect Bulgarian to Russian
-    'ca':    'Miguel',   # redirect Catalan to Spanish
-    'cs':    'Maxim',    # redirect Czech to Russian
-    'cy':    'Gwyneth',
-    'da':    'Mads',
-    'de':    'Hans',
-    'en':    'Joey',
-    'es':    'Miguel',
-    'fa':    'Zeina',    # redirect Farsi to Arabic
-    'fr':    'Mathieu',
-    'hi':    'Aditi',
-    'hr':    'Maxim',    # redirect Croatian to Russian
-    'is':    'Karl',
-    'it':    'Giorgio',
-    'ja':    'Takumi',
-    'ko':    'Seoyeon',
-    'mk':    'Maxim',    # redirect Macedonian to Russian
-    'mr':    'Aditi',    # redirect Marathi to Hindi
-    'ne':    'Aditi',    # redirect Nepali to Hindi
-    'nl':    'Ruben',
-    'no':    'Liv',
-    'pl':    'Jacek',
-    'pt':    'Ricardo',
-    'ro':    'Carmen',
-    'ru':    'Maxim',
-    'sl':    'Maxim',    # redirect Slovene to Russian
-    'sk':    'Maxim',    # redirect Slovak to Russian
-    'sv':    'Astrid',
-    'tr':    'Filiz',
-    'uk':    'Maxim',    # redirect Ukrainian to Russian
+    'af': 'Ruben',  # redirect Afrikaans to Dutch
+    'ar': 'Zeina',
+    'bg': 'Maxim',  # redirect Bulgarian to Russian
+    'ca': 'Miguel',  # redirect Catalan to Spanish
+    'cs': 'Maxim',  # redirect Czech to Russian
+    'cy': 'Gwyneth',
+    'da': 'Mads',
+    'de': 'Hans',
+    'en': 'Joey',
+    'es': 'Miguel',
+    'fa': 'Zeina',  # redirect Farsi to Arabic
+    'fr': 'Mathieu',
+    'hi': 'Aditi',
+    'hr': 'Maxim',  # redirect Croatian to Russian
+    'is': 'Karl',
+    'it': 'Giorgio',
+    'ja': 'Takumi',
+    'ko': 'Seoyeon',
+    'mk': 'Maxim',  # redirect Macedonian to Russian
+    'mr': 'Aditi',  # redirect Marathi to Hindi
+    'ne': 'Aditi',  # redirect Nepali to Hindi
+    'nl': 'Ruben',
+    'no': 'Liv',
+    'pl': 'Jacek',
+    'pt': 'Ricardo',
+    'ro': 'Carmen',
+    'ru': 'Maxim',
+    'sl': 'Maxim',  # redirect Slovene to Russian
+    'sk': 'Maxim',  # redirect Slovak to Russian
+    'sv': 'Astrid',
+    'tr': 'Filiz',
+    'uk': 'Maxim',  # redirect Ukrainian to Russian
     'zh-cn': 'Zhiyu',
     'zh-tw': 'Zhiyu'
 }
@@ -113,19 +109,17 @@ WELCOME = "Hi! I am Fioriktos and I can learn how to speak! You can interact wit
           "\n- /bof : If I say something funny, you can make a screenshot and send it with this command in the description. Your screenshot could get published on @BestOfFioriktos. In case of an audio message, just reply to it with /bof" + \
           "\n- /gdpr : Here you can have more info about privacy, special commands and visit my source code 💻"
 
-
-
 """ Global objects """
 MEMORY_MANAGER = None
 
-
-
 """ This class handles data storage and synchronization (FullRam edition) """
+
+
 class MemoryManagerFullRam:
     def __init__(self):
-        self.chats     = dict()         # key = chat_id --- value = object Chat
-        self.OTPs      = dict()         # chats ready to be transfered: key = OTP [string] --- value = chat_id [integer]
-        self.last_sync = time.time()    # for automatic serialization on database
+        self.chats = dict()  # key = chat_id --- value = object Chat
+        self.OTPs = dict()  # chats ready to be transfered: key = OTP [string] --- value = chat_id [integer]
+        self.last_sync = time.time()  # for automatic serialization on database
 
     def get_chat_from_id(self, chat_id):
         try:
@@ -134,9 +128,9 @@ class MemoryManagerFullRam:
             chat = Chat()
             self.chats[chat_id] = chat
         chat.last_update = time.time()
-        
+
         logger.info("RAM: {} - DISK: N/A - NETWORK: N/A".format(len(self.chats)))
-        
+
         return chat
 
     def synchronize(self):
@@ -150,7 +144,8 @@ class MemoryManagerFullRam:
 
     def load_db(self):
         try:
-            s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
+            s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID,
+                                     aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
             dump = s3_client.get_object(Bucket=S3_BUCKET_NAME, Key="dump.txt")
             data = dump['Body'].read()
             self.unjsonify(data)
@@ -162,7 +157,8 @@ class MemoryManagerFullRam:
 
     def store_db(self):
         data = self.jsonify()
-        s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
+        s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                                 region_name=REGION_NAME)
         s3_client.put_object(Body=data.encode(), Bucket=S3_BUCKET_NAME, Key="dump.txt")
         return data
 
@@ -182,7 +178,7 @@ class MemoryManagerFullRam:
             deserialized_chat = Chat()
             deserialized_chat.torrent_level = jsonized_chat.get("torrent_level", 5)
             deserialized_chat.is_learning = jsonized_chat.get("is_learning", True)
-            deserialized_chat.model = jsonized_chat.get("model", { BEGIN: [END] })
+            deserialized_chat.model = jsonized_chat.get("model", {BEGIN: [END]})
             deserialized_chat.stickers = jsonized_chat.get("stickers", [])
             deserialized_chat.animations = jsonized_chat.get("animations", [])
             deserialized_chat.flagged_media = set(jsonized_chat.get("flagged_media", []))
@@ -225,27 +221,28 @@ class MemoryManagerFullRam:
         tx = self.chats[tx_chat_id]
         rx = Chat()
         rx.torrent_level = tx.torrent_level
-        rx.is_learning   = tx.is_learning
-        rx.model         = {key: value[:] for key, value in tx.model.items()}
-        rx.stickers      = tx.stickers[:]
-        rx.animations    = tx.animations[:]
+        rx.is_learning = tx.is_learning
+        rx.model = {key: value[:] for key, value in tx.model.items()}
+        rx.stickers = tx.stickers[:]
+        rx.animations = tx.animations[:]
         rx.flagged_media = tx.flagged_media.copy()
-        rx.last_update   = tx.last_update
-        
+        rx.last_update = tx.last_update
+
         self.chats[rx_chat_id] = rx
         del self.OTPs[OTP]
         return True
 
 
-
 """ This class handles data storage and synchronization (ThreeLevelCache edition) """
+
+
 class MemoryManagerThreeLevelCache:
     def __init__(self):
-        self.chats         = dict()         # key = chat_id [integer] --- value = Chat [object]
-        self.disk_chats    = set()          # chats in local storage: set of chat_key [string]
-        self.network_chats = set()          # chats in remote storage: set of chat_key [string]
-        self.OTPs          = dict()         # chats ready to be transfered: key = OTP [string] --- value = chat_id [integer]
-        self.last_sync     = time.time()    # for automatic serialization on database
+        self.chats = dict()  # key = chat_id [integer] --- value = Chat [object]
+        self.disk_chats = set()  # chats in local storage: set of chat_key [string]
+        self.network_chats = set()  # chats in remote storage: set of chat_key [string]
+        self.OTPs = dict()  # chats ready to be transfered: key = OTP [string] --- value = chat_id [integer]
+        self.last_sync = time.time()  # for automatic serialization on database
 
     def get_chat_from_id(self, chat_id):
         # implement a three-level cache hierarchy: RAM > local storage > remote storage
@@ -258,18 +255,20 @@ class MemoryManagerThreeLevelCache:
             chat = self.unjsonify(data)
             self.chats[chat_id] = chat
         elif chat_key in self.network_chats:
-            s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
+            s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID,
+                                     aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
             dump = s3_client.get_object(Bucket=S3_BUCKET_NAME, Key=chat_key)
             data = dump['Body'].read()
             chat = self.unjsonify(data)
             self.chats[chat_id] = chat
         else:
             chat = Chat()
-            self.chats[chat_id] = chat 
+            self.chats[chat_id] = chat
         chat.last_update = time.time()
 
-        logger.info("RAM: {} - DISK: {} - NETWORK: {}".format(len(self.chats), len(self.disk_chats), len(self.network_chats)))
-        
+        logger.info(
+            "RAM: {} - DISK: {} - NETWORK: {}".format(len(self.chats), len(self.disk_chats), len(self.network_chats)))
+
         return chat
 
     def synchronize(self):
@@ -282,11 +281,12 @@ class MemoryManagerThreeLevelCache:
 
     def load_db(self):
         try:
-            s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
+            s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID,
+                                     aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
 
             paginator = s3_client.get_paginator('list_objects_v2')
             pages = paginator.paginate(Bucket=S3_BUCKET_NAME, Prefix=PREFIX)
-            
+
             now = time.time()
             for page in pages:
                 for chat_aws in page["Contents"]:
@@ -295,7 +295,7 @@ class MemoryManagerThreeLevelCache:
                         s3_client.delete_object(Bucket=S3_BUCKET_NAME, Key=chat_aws["Key"])
                     else:
                         self.network_chats.add(chat_aws["Key"])
-            
+
         except Exception as e:
             # cold start: 'chats/' does not exist yet
             logger.warning("Database not found: executing cold start")
@@ -307,13 +307,14 @@ class MemoryManagerThreeLevelCache:
             pass
 
     def store_db(self):
-        s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
+        s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+                                 region_name=REGION_NAME)
 
         remove_from_RAM = []
         for chat_id in self.chats:
             current_chat = self.chats[chat_id]
             chat_key = TO_KEY(chat_id)
-            
+
             if current_chat.dirty_bit:
                 data = self.jsonify(current_chat)
                 s3_client.put_object(Body=data.encode(), Bucket=S3_BUCKET_NAME, Key=chat_key)
@@ -339,7 +340,7 @@ class MemoryManagerThreeLevelCache:
         deserialized_chat = Chat()
         deserialized_chat.torrent_level = jsonized_chat.get("torrent_level", 5)
         deserialized_chat.is_learning = jsonized_chat.get("is_learning", True)
-        deserialized_chat.model = jsonized_chat.get("model", { BEGIN: [END] })
+        deserialized_chat.model = jsonized_chat.get("model", {BEGIN: [END]})
         deserialized_chat.stickers = jsonized_chat.get("stickers", [])
         deserialized_chat.animations = jsonized_chat.get("animations", [])
         deserialized_chat.flagged_media = set(jsonized_chat.get("flagged_media", []))
@@ -365,7 +366,8 @@ class MemoryManagerThreeLevelCache:
         # remove from S3
         if chat_key in self.network_chats:
             # if the chat has been created recently, it may not be on S3
-            s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
+            s3_client = boto3.client("s3", aws_access_key_id=AWS_ACCESS_KEY_ID,
+                                     aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
             s3_client.delete_object(Bucket=S3_BUCKET_NAME, Key=chat_key)
             self.network_chats.remove(chat_key)
         # remove from local storage
@@ -388,17 +390,16 @@ class MemoryManagerThreeLevelCache:
         tx = self.chats[tx_chat_id]
         rx = Chat()
         rx.torrent_level = tx.torrent_level
-        rx.is_learning   = tx.is_learning
-        rx.model         = {key: value[:] for key, value in tx.model.items()}
-        rx.stickers      = tx.stickers[:]
-        rx.animations    = tx.animations[:]
+        rx.is_learning = tx.is_learning
+        rx.model = {key: value[:] for key, value in tx.model.items()}
+        rx.stickers = tx.stickers[:]
+        rx.animations = tx.animations[:]
         rx.flagged_media = tx.flagged_media.copy()
-        rx.last_update   = tx.last_update
-        
+        rx.last_update = tx.last_update
+
         self.chats[rx_chat_id] = rx
         del self.OTPs[OTP]
         return True
-
 
 
 def create_memory_manager(name):
@@ -408,13 +409,14 @@ def create_memory_manager(name):
         return MemoryManagerThreeLevelCache()
 
 
-
 """ This class handles the data for a single chat, including Fiorix chain generation """
+
+
 class Chat:
     def __init__(self):
         self.torrent_level = 5
         self.is_learning = True
-        self.model = { BEGIN: [END] }
+        self.model = {BEGIN: [END]}
         self.stickers = []
         self.animations = []
         self.flagged_media = set()
@@ -429,9 +431,9 @@ class Chat:
                 tokens = [BEGIN] + list(filter(lambda x: "http" not in x, tokens)) + [END]
 
                 # actual learning
-                for i in range(len(tokens)-1):
+                for i in range(len(tokens) - 1):
                     token = tokens[i]
-                    successor = tokens[i+1]
+                    successor = tokens[i + 1]
 
                     # use the token without special characters
                     filtered_token = self.filter(token)
@@ -445,7 +447,7 @@ class Chat:
                     if len(self.model[token]) < SUCCESSOR_LIST_MAX_LENGTH:
                         self.model[token].append(successor)
                     else:
-                        guess = random.randint(0, SUCCESSOR_LIST_MAX_LENGTH-1)
+                        guess = random.randint(0, SUCCESSOR_LIST_MAX_LENGTH - 1)
                         self.model[token][guess] = successor
 
     def learn_sticker(self, sticker, unique_id):
@@ -453,7 +455,7 @@ class Chat:
             if len(self.stickers) < MEDIA_LIST_MAX_LENGTH:
                 self.stickers.append(sticker)
             else:
-                guess = random.randint(0, MEDIA_LIST_MAX_LENGTH-1)
+                guess = random.randint(0, MEDIA_LIST_MAX_LENGTH - 1)
                 self.stickers[guess] = sticker
 
     def learn_animation(self, animation, unique_id):
@@ -461,12 +463,12 @@ class Chat:
             if len(self.animations) < MEDIA_LIST_MAX_LENGTH:
                 self.animations.append(animation)
             else:
-                guess = random.randint(0, MEDIA_LIST_MAX_LENGTH-1)
+                guess = random.randint(0, MEDIA_LIST_MAX_LENGTH - 1)
                 self.animations[guess] = animation
 
     def reply(self):
-        if random.random()*10 < self.torrent_level**2/10:
-            if random.random()*10 < 9.0:
+        if random.random() * 10 < self.torrent_level ** 2 / 10:
+            if random.random() * 10 < 9.0:
                 return (MESSAGE, self.talk())
             else:
                 type_of_reply = random.choice([STICKER, ANIMATION, AUDIO])
@@ -498,7 +500,7 @@ class Chat:
 
     def speech(self):
         text = self.talk()
-        
+
         try:
             candidates = langdetect.detect_langs(text)
             winner = random.choice(candidates).lang
@@ -509,7 +511,8 @@ class Chat:
             # fallback to Italian
             voice = LANG_TO_VOICE['it']
 
-        polly_client = boto3.client("polly", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
+        polly_client = boto3.client("polly", aws_access_key_id=AWS_ACCESS_KEY_ID,
+                                    aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name=REGION_NAME)
         filtered_text = ''.join(filter(lambda ch: ch.isalnum(), text))
         response = polly_client.synthesize_speech(VoiceId=voice,
                                                   OutputFormat='mp3',
@@ -553,16 +556,16 @@ class Chat:
         for word in self.model:
             length = len(self.model[word])
             if length != 0:
-                self.model[word] = self.model[word][length//2:] + [END]
+                self.model[word] = self.model[word][length // 2:] + [END]
         length = len(self.stickers)
-        self.stickers = self.stickers[length//2:]
+        self.stickers = self.stickers[length // 2:]
         length = len(self.animations)
-        self.animations = self.animations[length//2:]
+        self.animations = self.animations[length // 2:]
 
     def clean(self):
         # find words that are not referenced by any other word: those can be deleted safely
         words = set(self.model.keys())
-        referenced_words = { BEGIN }
+        referenced_words = {BEGIN}
         for word in words:
             for successor in self.model[word]:
                 referenced_words.add(successor)
@@ -572,7 +575,7 @@ class Chat:
         # there are many unreferenced words: among them, we delete only those with no successors except for END
         not_to_remove = set()
         for word in to_remove:
-            successors = set(self.model[word]) - { END }
+            successors = set(self.model[word]) - {END}
             if len(successors) != 0:
                 not_to_remove.add(word)
                 not_to_remove.add(self.filter(word))
@@ -585,7 +588,8 @@ class Chat:
 
     def flag(self, item, unique_id):
         self.stickers = list(filter(lambda sticker: sticker != item and not sticker.endswith(unique_id), self.stickers))
-        self.animations = list(filter(lambda animation: animation != item and not animation.endswith(unique_id), self.animations))
+        self.animations = list(
+            filter(lambda animation: animation != item and not animation.endswith(unique_id), self.animations))
         self.flagged_media.add(unique_id)
 
     def unflag(self, unique_id):
@@ -608,8 +612,9 @@ class Chat:
         return json.dumps(jsonification)
 
 
-
 """ Decorators """
+
+
 def restricted(f):
     @wraps(f)
     def wrapped(update, context, *args, **kwargs):
@@ -619,7 +624,9 @@ def restricted(f):
             logger.warning("Unauthorized access denied for {} ({}).".format(user_id, username))
             return
         f(update, context, *args, **kwargs)
+
     return wrapped
+
 
 def chat_finder(f):
     @wraps(f)
@@ -627,23 +634,29 @@ def chat_finder(f):
         chat_id = update.message.chat_id
         chat = MEMORY_MANAGER.get_chat_from_id(chat_id)
         f(update, context, chat, *args, **kwargs)
+
     return wrapped
+
 
 def serializer(f):
     @wraps(f)
     def wrapped(update, context, *args, **kwargs):
         f(update, context, *args, **kwargs)
         MEMORY_MANAGER.synchronize()
+
     return wrapped
 
 
-
 """ Commands """
+
+
 def start(update, context):
     context.bot.send_message(chat_id=update.message.chat_id, text="SYN")
 
+
 def help(update, context):
     context.bot.send_message(chat_id=update.message.chat_id, text=WELCOME)
+
 
 @serializer
 @chat_finder
@@ -654,6 +667,7 @@ def fioriktos(update, context, chat):
     else:
         context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Empty chain")
 
+
 @serializer
 @chat_finder
 def choose_sticker(update, context, chat):
@@ -662,6 +676,7 @@ def choose_sticker(update, context, chat):
         context.bot.send_sticker(chat_id=update.message.chat_id, sticker=reply)
     else:
         context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Empty sticker set")
+
 
 @serializer
 @chat_finder
@@ -672,6 +687,7 @@ def choose_animation(update, context, chat):
     else:
         context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Empty gif set")
 
+
 @serializer
 @chat_finder
 def choose_audio(update, context, chat):
@@ -681,21 +697,27 @@ def choose_audio(update, context, chat):
     else:
         context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Empty chain")
 
+
 @serializer
 @chat_finder
 def torrent(update, context, chat):
     if len(context.args) == 0:
-        context.bot.send_message(chat_id=update.message.chat_id, text="Torrent level is {}\n\nChange with /torrent followed by a number between 0 and 10.".format(chat.get_torrent()))
+        context.bot.send_message(chat_id=update.message.chat_id,
+                                 text="Torrent level is {}\n\nChange with /torrent followed by a number between 0 and 10.".format(
+                                     chat.get_torrent()))
     else:
         try:
             quantity = int(context.args[0])
             if quantity < 0 or quantity > 10:
-                context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Send /torrent with a number between 0 and 10.")
+                context.bot.send_message(chat_id=update.message.chat_id,
+                                         text="NAK // Send /torrent with a number between 0 and 10.")
             else:
                 chat.set_torrent(quantity)
                 context.bot.send_message(chat_id=update.message.chat_id, text="ACK")
         except:
-            context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Send /torrent with a number between 0 and 10.")
+            context.bot.send_message(chat_id=update.message.chat_id,
+                                     text="NAK // Send /torrent with a number between 0 and 10.")
+
 
 @serializer
 @chat_finder
@@ -703,11 +725,13 @@ def enable_learning(update, context, chat):
     chat.enable_learning()
     context.bot.send_message(chat_id=update.message.chat_id, text="Learning enabled")
 
+
 @serializer
 @chat_finder
 def disable_learning(update, context, chat):
     chat.disable_learning()
     context.bot.send_message(chat_id=update.message.chat_id, text="Learning disabled")
+
 
 @serializer
 @chat_finder
@@ -716,32 +740,39 @@ def thanos(update, context, chat):
         expected = md5(str(update.message.chat_id).encode()).hexdigest().upper()
         real = context.args[0]
         if real != expected:
-            context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Currently this chat has {} words, {} stickers and {} gifs for a total size of {} bytes. Send this message to delete half the memory of this chat.".format(len(chat.model),
-                                                                                                                                                                                                                                            len(chat.stickers),
-                                                                                                                                                                                                                                            len(chat.animations),
-                                                                                                                                                                                                                                            len(str(chat).encode())))
+            context.bot.send_message(chat_id=update.message.chat_id,
+                                     text="NAK // Currently this chat has {} words, {} stickers and {} gifs for a total size of {} bytes. Send this message to delete half the memory of this chat.".format(
+                                         len(chat.model),
+                                         len(chat.stickers),
+                                         len(chat.animations),
+                                         len(str(chat).encode())))
             context.bot.send_message(chat_id=update.message.chat_id, text="/thanos {}".format(expected))
         else:
             context.bot.send_message(chat_id=update.message.chat_id, text="ACK // Let's do some cleaning!")
             time.sleep(3)
-            context.bot.send_animation(chat_id=update.message.chat_id, animation=open('thanos.mp4', 'rb'))            
-            
+            context.bot.send_animation(chat_id=update.message.chat_id, animation=open('thanos.mp4', 'rb'))
+
             # destroy half the chat
             chat.halve()
             # delete isolated words
             chat.clean()
-            
+
             time.sleep(6)
-            context.bot.send_message(chat_id=update.message.chat_id, text="Now this chat contains {} words, {} stickers and {} gifs for a total size of {} bytes.".format(len(chat.model),
-                                                                                                                                                                          len(chat.stickers),
-                                                                                                                                                                          len(chat.animations),
-                                                                                                                                                                          len(str(chat).encode())))
+            context.bot.send_message(chat_id=update.message.chat_id,
+                                     text="Now this chat contains {} words, {} stickers and {} gifs for a total size of {} bytes.".format(
+                                         len(chat.model),
+                                         len(chat.stickers),
+                                         len(chat.animations),
+                                         len(str(chat).encode())))
     except:
-        context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Currently this chat has {} words, {} stickers and {} gifs for a total size of {} bytes. Send this message to delete half the memory of this chat.".format(len(chat.model),
-                                                                                                                                                                                                                                        len(chat.stickers),
-                                                                                                                                                                                                                                        len(chat.animations),
-                                                                                                                                                                                                                                        len(str(chat).encode())))
+        context.bot.send_message(chat_id=update.message.chat_id,
+                                 text="NAK // Currently this chat has {} words, {} stickers and {} gifs for a total size of {} bytes. Send this message to delete half the memory of this chat.".format(
+                                     len(chat.model),
+                                     len(chat.stickers),
+                                     len(chat.animations),
+                                     len(str(chat).encode())))
         context.bot.send_message(chat_id=update.message.chat_id, text="/thanos {}".format(expected))
+
 
 def bof(update, context):
     if update.message.reply_to_message and update.message.reply_to_message.audio and update.message.reply_to_message.from_user.id == BOT_ID:
@@ -751,10 +782,12 @@ def bof(update, context):
         context.bot.send_voice(chat_id=ADMIN, voice=update.message.reply_to_message.voice)
         context.bot.send_message(chat_id=update.message.chat_id, text="ACK")
     elif not update.message.photo:
-        context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Reply to an audio message with /bof or send a screenshot with /bof in the description, you could get published on @BestOfFioriktos")
+        context.bot.send_message(chat_id=update.message.chat_id,
+                                 text="NAK // Reply to an audio message with /bof or send a screenshot with /bof in the description, you could get published on @BestOfFioriktos")
     elif update.message.caption and ("/bof" in update.message.caption or "/bestoffioriktos" in update.message.caption):
         context.bot.send_photo(chat_id=ADMIN, photo=update.message.photo[-1])
         context.bot.send_message(chat_id=update.message.chat_id, text="ACK")
+
 
 @serializer
 @chat_finder
@@ -762,17 +795,20 @@ def learn_text_and_reply(update, context, chat):
     chat.learn_text(update.message.text)
     reply(update, context, chat)
 
+
 @serializer
 @chat_finder
 def learn_sticker_and_reply(update, context, chat):
     chat.learn_sticker(update.message.sticker.file_id, update.message.sticker.file_unique_id)
     reply(update, context, chat)
 
+
 @serializer
 @chat_finder
 def learn_animation_and_reply(update, context, chat):
     chat.learn_animation(update.message.animation.file_id, update.message.animation.file_unique_id)
     reply(update, context, chat)
+
 
 @serializer
 @chat_finder
@@ -786,8 +822,11 @@ def gdpr(update, context, chat):
             filename = MEMORY_MANAGER.download_chat(chat, update.message.chat_id)
             context.bot.send_document(chat_id=update.message.chat_id, document=open(filename, "rb"))
         elif command == "delete":
-            MEMORY_MANAGER.delete_chat(update.message.chat_id)
-            context.bot.send_message(chat_id=update.message.chat_id, text="ACK")
+            if user_id == ADMIN:
+                MEMORY_MANAGER.delete_chat(update.message.chat_id)
+                context.bot.send_message(chat_id=update.message.chat_id, text="ACK")
+            else:
+                context.bot.send_message(chat_id=update.message.chat_id, text="denied")
         elif command == "flag":
             chat_id = update.message.chat_id
             user_id = update.message.from_user.id
@@ -801,7 +840,8 @@ def gdpr(update, context, chat):
                         item = update.message.reply_to_message.animation.file_id
                         unique_id = update.message.reply_to_message.animation.file_unique_id
                     else:
-                        context.bot.send_message(chat_id=chat_id, text="NAK // Reply to a sticker or a gif with /gdpr flag")
+                        context.bot.send_message(chat_id=chat_id,
+                                                 text="NAK // Reply to a sticker or a gif with /gdpr flag")
                         return
                     # remove from bot memory
                     chat.flag(item, unique_id)
@@ -826,19 +866,22 @@ def gdpr(update, context, chat):
                     elif update.message.reply_to_message.animation:
                         unique_id = update.message.reply_to_message.animation.file_unique_id
                     else:
-                        context.bot.send_message(chat_id=chat_id, text="NAK // Reply to a sticker or a gif with /gdpr unflag")
+                        context.bot.send_message(chat_id=chat_id,
+                                                 text="NAK // Reply to a sticker or a gif with /gdpr unflag")
                         return
                     # update bot memory
                     chat.unflag(unique_id)
                     # done
                     context.bot.send_message(chat_id=chat_id, text="ACK")
                 else:
-                    context.bot.send_message(chat_id=chat_id, text="NAK // Reply to a sticker or a gif with /gdpr unflag")
+                    context.bot.send_message(chat_id=chat_id,
+                                             text="NAK // Reply to a sticker or a gif with /gdpr unflag")
             else:
                 context.bot.send_message(chat_id=chat_id, text="NAK // Command available only for admins")
         elif command == "tx":
             OTP = MEMORY_MANAGER.transmit_chat(update.message.chat_id)
-            context.bot.send_message(chat_id=update.message.chat_id, text="ACK // Send this command in the target group to copy there the memory of this chat. This code will expire after 5 minutes.")
+            context.bot.send_message(chat_id=update.message.chat_id,
+                                     text="ACK // Send this command in the target group to copy there the memory of this chat. This code will expire after 5 minutes.")
             context.bot.send_message(chat_id=update.message.chat_id, text="/gdpr rx {}".format(OTP))
         elif command == "rx":
             if len(context.args) < 2:
@@ -852,6 +895,7 @@ def gdpr(update, context, chat):
         else:
             context.bot.send_message(chat_id=update.message.chat_id, text="NAK // Unknown command after /gdpr")
 
+
 @serializer
 @chat_finder
 def welcome(update, context, chat):
@@ -860,6 +904,7 @@ def welcome(update, context, chat):
         for member in update.message.new_chat_members:
             if member.username == 'FioriktosBot':
                 context.bot.send_message(chat_id=update.message.chat_id, text=WELCOME)
+
 
 def reply(update, context, chat):
     response = chat.reply()
@@ -878,10 +923,10 @@ def reply(update, context, chat):
             elif type_of_response == AUDIO:
                 context.bot.send_voice(chat_id=update.message.chat_id, voice=open(content, 'rb'))
 
+
 def error(update, context):
     """Log Errors caused by Updates."""
     logger.warning('Update "%s" caused error "%s"', update, context.error)
-
 
 
 def main():
@@ -889,7 +934,7 @@ def main():
 
     # Create memory manager and restore data
     global MEMORY_MANAGER
-    MEMORY_MANAGER = create_memory_manager("ThreeLevelCache")   # "FullRam" | "ThreeLevelCache"
+    MEMORY_MANAGER = create_memory_manager("ThreeLevelCache")  # "FullRam" | "ThreeLevelCache"
     MEMORY_MANAGER.load_db()
 
     # Create the EventHandler and pass it your bot's token
@@ -919,17 +964,17 @@ def main():
     dp.add_handler(MessageHandler(Filters.animation, learn_animation_and_reply))
     dp.add_handler(MessageHandler(Filters.photo, bof))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome))
-    
+
     # log all errors
     dp.add_error_handler(error)
 
     # start the Bot
-    #updater.start_polling()
+    # updater.start_polling()
 
     # Run the bot until you press Ctrl-C or the process receives SIGINT,
     # SIGTERM or SIGABRT. This should be used most of the time, since
     # start_polling() is non-blocking and will stop the bot gracefully.
-    #updater.idle()
+    # updater.idle()
 
     updater.start_webhook(listen="0.0.0.0",
                           port=PORT,
@@ -942,6 +987,7 @@ def main():
                             max_connections=100,
                             allowed_updates=["message", "channel_post", "my_chat_member"],
                             drop_pending_updates=True)
+
 
 if __name__ == '__main__':
     main()
