@@ -786,8 +786,10 @@ def gdpr(update, context, chat):
             filename = MEMORY_MANAGER.download_chat(chat, update.message.chat_id)
             context.bot.send_document(chat_id=update.message.chat_id, document=open(filename, "rb"))
         elif command == "delete":
+            if user_id == ADMIN:
+            context.bot.send_message(chat_id=update.message.chat_id, text="NAK")
+            else:
             MEMORY_MANAGER.delete_chat(update.message.chat_id)
-            context.bot.send_message(chat_id=update.message.chat_id, text="ACK")
         elif command == "flag":
             chat_id = update.message.chat_id
             user_id = update.message.from_user.id
